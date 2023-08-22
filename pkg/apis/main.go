@@ -12,7 +12,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"gorm.io/gorm"
-	"github.com/spearexit/dropick.core/v2/docs"
+	"github.com/spearexit/dropick.core/v2/api"
 	"github.com/swaggo/gin-swagger"
 	"github.com/swaggo/files"
 )
@@ -22,30 +22,7 @@ type App struct {
 	Validate *validator.Validate
 }
 
-type JSONResult struct {
-    Code    int          `json:"code" `
-    Message string       `json:"message"`
-    Data    interface{}  `json:"data"`
-}
-
-// @BasePath /api/v1
-
-// Ping godoc
-// @Summary ping to check server status
-// @Schemes
-// @Description do ping
-// @Tags /health
-// @Accept json
-// @Produce json
-// @Success 200 {object} JSONResult 
-// @Router /ping [get]
-func Ping(c *gin.Context) {
-	c.JSON(200, JSONResult{
-		Code:    200,
-		Message: "pong",
-		Data:    nil,
-	})
-}
+//	@BasePath	/api/v1
 
 func (a *App) Close() {
 	if sqlDB, err := a.Db.DB(); err == nil {
@@ -55,7 +32,7 @@ func (a *App) Close() {
 
 func (a *App) GetRouter() *gin.Engine {
 	r := gin.Default()
-	docs.SwaggerInfo.BasePath = "/api/v1"
+	api.SwaggerInfo.BasePath = "/api/v1"
 
 	v1 := r.Group("/api/v1")
 	{

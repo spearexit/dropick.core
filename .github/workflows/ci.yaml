@@ -70,20 +70,21 @@ jobs:
       - uses: actions/setup-go@v4
         with:
             go-version: ${{ matrix.go-version }}
-      - uses: technote-space/get-diff-action@v6
-        id: get_diff
-        with:
-          FILES: |
-            docs/docs.go
-            docs/swagger.yaml
       - name: download and execute swag
         run: |
           go install github.com/swaggo/swag/cmd/swag@latest
-          swag init -d cmd/dropick_api -g apiserver.go --ot go,yaml
+          swag init -d pkg/apis --ot go,yaml -o api
         if: !env.MATCHED_FILES
-      - uses: technote-space/get-diff-action@v6
-        id: get_diff_again
-        with:
-          FILES: |
-            docs/docs.go
-            docs/swagger.yaml
+      - id: get_diff
+        run: |
+          echo "::set-output name=diff::$(git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }} | grep -E '((api/swagger.yaml)|(api/docs.go))$')"
+      - id: not_up_to_date
+        if: steps.get_diff.outputs.diff > 0
+        run: |
+          echo "::error file=docs/swagger.yaml::docs seems not updated, please run 'swag init -d pkg/apis --ot go,yaml -o api' and commit the changes."
+          exit 1
+      - id: up_to_date
+        if: steps.get_diff.outputs.diff < 1
+        run: |
+          echo "docs/swagger.yaml is up to date."
+          exit 0

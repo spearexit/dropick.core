@@ -1,5 +1,6 @@
+basePath: /api/v1
 definitions:
-  app.JSONResult:
+  apis.JSONResult:
     properties:
       code:
         type: integer
@@ -21,8 +22,8 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/app.JSONResult'
+            $ref: '#/definitions/apis.JSONResult'
       summary: ping to check server status
       tags:
-      - /
+      - /health
 swagger: "2.0"
