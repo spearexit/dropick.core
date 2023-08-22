@@ -24,7 +24,7 @@ jobs:
         with:
           go-version: ${{ matrix.go-version }}
       - name: Run lint
-        run: go fmt ./...
+        run: go vet ./...
   test:
     name: Test
     strategy:
