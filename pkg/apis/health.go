@@ -8,11 +8,11 @@ import (
 //	@Summary	ping to check server status
 //	@Schemes
 //	@Description	do ping
-//	@Tags			/
+//	@Tags			/health
 //	@Accept			json
 //	@Produce		json
 //	@Success		200	{object}	JSONResult	
-//	@Router			/ping [get]
+//	@Router			/health/ping [get]
 func Ping(c *gin.Context) {
 	c.JSON(200, JSONResult{
 		Code:    200,
