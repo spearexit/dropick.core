@@ -1,0 +1,89 @@
+name: CI
+on: 
+  push:
+    branches: [master]
+  pull_request:
+
+env:
+  DB_USER: postgres
+  DB_PASSWORD: postgres
+  DB_HOST: localhost
+  DB_DATABASE: dropick_test
+  DB_PORT: 5432
+jobs:
+  lint:
+    name: Lint
+    strategy:
+      matrix:
+        go-version: [1.21.x]
+        os: [ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v4
+        with:
+          go-version: ${{ matrix.go-version }}
+      - name: Run lint
+        run: go fmt ./...
+  test:
+    name: Test
+    strategy:
+      matrix:
+        go-version: [1.21.x]
+        os: [ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    services:
+      db:
+        image: postgres
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: dropick_test
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v4
+        with:
+          go-version: ${{ matrix.go-version }}
+      - name: install dependency
+        run: go mod download
+      - name: Run migrate
+        run : go run cmd/dropick_migrate/migrate.go
+      - name: Run test
+        run: go test ./...
+  docs_update_check:
+    name: Docs Update Check
+    strategy:
+      matrix:
+        go-version: [1.21.x]
+        os: [ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v4
+        with:
+            go-version: ${{ matrix.go-version }}
+      - uses: technote-space/get-diff-action@v6
+        id: get_diff
+        with:
+          FILES: |
+            docs/docs.go
+            docs/swagger.yaml
+      - name: download and execute swag
+        run: |
+          go install github.com/swaggo/swag/cmd/swag@latest
+          swag init -d cmd/dropick_api -g apiserver.go --ot go,yaml
+        if: !env.MATCHED_FILES
+      - uses: technote-space/get-diff-action@v6
+        id: get_diff_again
+        with:
+          FILES: |
+            docs/docs.go
+            docs/swagger.yaml

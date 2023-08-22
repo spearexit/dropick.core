@@ -1,0 +1,28 @@
+definitions:
+  app.JSONResult:
+    properties:
+      code:
+        type: integer
+      data: {}
+      message:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /ping:
+    get:
+      consumes:
+      - application/json
+      description: do ping
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.JSONResult'
+      summary: ping to check server status
+      tags:
+      - /
+swagger: "2.0"
