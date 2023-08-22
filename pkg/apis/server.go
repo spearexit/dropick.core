@@ -34,7 +34,7 @@ type JSONResult struct {
 // @Summary ping to check server status
 // @Schemes
 // @Description do ping
-// @Tags /
+// @Tags /health
 // @Accept json
 // @Produce json
 // @Success 200 {object} JSONResult 
@@ -59,7 +59,10 @@ func (a *App) GetRouter() *gin.Engine {
 
 	v1 := r.Group("/api/v1")
 	{
-		v1.GET("/ping", Ping)
+		health := v1.Group("/health")
+		{
+			health.GET("/ping", Ping)
+		}
 	}
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
