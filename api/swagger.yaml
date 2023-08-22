@@ -11,7 +11,7 @@ definitions:
 info:
   contact: {}
 paths:
-  /ping:
+  /health/ping:
     get:
       consumes:
       - application/json
