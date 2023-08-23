@@ -9,13 +9,13 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/spearexit/dropick.core/v2/internal/shared"
-	"github.com/spearexit/dropick.core/v2/api"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
-	"gorm.io/gorm"
-	"github.com/swaggo/gin-swagger"
+	"github.com/spearexit/dropick.core/v2/api"
+	"github.com/spearexit/dropick.core/v2/internal/shared"
 	"github.com/swaggo/files"
+	"github.com/swaggo/gin-swagger"
+	"gorm.io/gorm"
 )
 
 type App struct {

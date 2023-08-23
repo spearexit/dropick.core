@@ -7,7 +7,7 @@ import (
 )
 
 type ConnectionInfos struct {
-	User    string
+	User     string
 	Password string
 	Host     string
 	Port     string
@@ -25,7 +25,7 @@ type ServerConfig struct {
 
 type ConfigStruct struct {
 	Database *DatabaseConfig
-	Server  *ServerConfig
+	Server   *ServerConfig
 }
 
 var Config *ConfigStruct
@@ -35,10 +35,10 @@ func init() {
 		Config = &ConfigStruct{
 			Database: &DatabaseConfig{
 				Connection: &ConnectionInfos{
-					User: os.Getenv("DB_USER"),
+					User:     os.Getenv("DB_USER"),
 					Password: os.Getenv("DB_PASSWORD"),
-					Host: os.Getenv("DB_HOST"),
-					Port: os.Getenv("DB_PORT"),
+					Host:     os.Getenv("DB_HOST"),
+					Port:     os.Getenv("DB_PORT"),
 					Database: os.Getenv("DB_DATABASE"),
 				},
 			},

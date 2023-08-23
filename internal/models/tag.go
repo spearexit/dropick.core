@@ -6,5 +6,5 @@ import (
 
 type Tag struct {
 	gorm.Model
-	TagName          string   `from:"tag_type" json:"tag_type"`
+	TagName string `from:"tag_type" json:"tag_type"`
 }

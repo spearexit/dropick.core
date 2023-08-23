@@ -6,5 +6,5 @@ import (
 
 type User struct {
 	gorm.Model
-	Nickname          string   `from:"nickname" json:"nickname"`
+	Nickname string `from:"nickname" json:"nickname"`
 }
