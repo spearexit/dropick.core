@@ -84,14 +84,14 @@ jobs:
       - name: download and execute swag
         run: |
           go install github.com/swaggo/swag/cmd/swag@latest
-          swag init -d pkg/apis --ot go,yaml -o api
+          swag init -d internal/apis -g app.go --ot go,yaml -o api
       - id: get_diff
         run: |
           echo "::set-output name=diff::$(git diff --name-only ${{ github.event.pull_request.head.sha }} | grep -E '((api/swagger.yaml)|(api/docs.go))$')"
       - id: not_up_to_date
         if: ${{ steps.get_diff.outputs.diff }}
         run: |
-          echo "::error file=docs/swagger.yaml::docs seems not updated, please run 'swag init -d pkg/apis --ot go,yaml -o api' and commit the changes."
+          echo "::error file=docs/swagger.yaml::docs seems not updated, please run 'swag init -d internal/apis -g app.go --ot go,yaml -o api' and commit the changes."
           exit 1
       - id: up_to_date
         if: ${{ !steps.get_diff.outputs.diff }}
