@@ -9,10 +9,11 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/spearexit/dropick.core/v2/internal/shared"
+	"github.com/spearexit/dropick.core/v2/api"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"gorm.io/gorm"
-	"github.com/spearexit/dropick.core/v2/api"
 	"github.com/swaggo/gin-swagger"
 	"github.com/swaggo/files"
 )
@@ -24,6 +25,20 @@ type App struct {
 
 //	@BasePath	/api/v1
 
+func New() *App {
+	db, err := shared.SetConnection(shared.Config.Database)
+	if err != nil {
+		log.Fatal(err)
+	} else {
+		log.Println("Database connection established")
+	}
+
+	return &App{
+		Db:       db,
+		Validate: validator.New(),
+	}
+}
+
 func (a *App) Close() {
 	if sqlDB, err := a.Db.DB(); err == nil {
 		sqlDB.Close()
@@ -31,7 +46,13 @@ func (a *App) Close() {
 }
 
 func (a *App) GetRouter() *gin.Engine {
-	r := gin.Default()
+	var r *gin.Engine
+	if shared.Config.Server.Mode == "production" {
+		gin.SetMode(gin.ReleaseMode)
+		r = gin.New()
+	} else {
+		r = gin.Default()
+	}
 	api.SwaggerInfo.BasePath = "/api/v1"
 
 	v1 := r.Group("/api/v1")
@@ -49,7 +70,7 @@ func (a *App) GetRouter() *gin.Engine {
 func (a *App) Start() {
 	router := a.GetRouter()
 	srv := &http.Server{
-		Addr:    ":8080",
+		Addr:    ":" + shared.Config.Server.Port,
 		Handler: router,
 	}
 

@@ -3,13 +3,14 @@ package main
 import (
 	"log"
 
-	"github.com/spearexit/dropick.core/v2/pkg/models"
+	"github.com/spearexit/dropick.core/v2/internal/models"
+	"github.com/spearexit/dropick.core/v2/internal/shared"
 	"github.com/go-gormigrate/gormigrate/v2"
 	"gorm.io/gorm"
 )
 
 func main() {
-	db, err := models.SetConnection()
+	db, err := shared.SetConnection(shared.Config.Database)
 	if err != nil {
 		log.Fatal(err)
 	}
