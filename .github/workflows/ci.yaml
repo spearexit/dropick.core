@@ -66,7 +66,7 @@ jobs:
       - name: install dependency
         run: go mod download
       - name: Run migrate
-        run : go run cmd/dropick_migrate/migrate.go
+        run : go run cmd/dropick_migrate/migrate_initialize.go
       - name: Run test
         run: go test -v ./...
   docs_update_check:
