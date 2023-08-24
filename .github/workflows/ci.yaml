@@ -82,6 +82,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
       - uses: actions/setup-go@v4
         with:
           go-version: ${{ matrix.go-version }}
@@ -91,7 +93,7 @@ jobs:
           swag init -d internal/apis -g app.go --ot go,yaml -o api
       - id: get_diff
         run: |
-          echo "::set-output name=diff::$(git diff --name-only ${{ github.event.pull_request.head.sha }} | grep -E '((api/swagger.yaml)|(api/docs.go))$')"
+          echo "diff=$(git diff --name-only ${{ github.event.pull_request.head.sha }} | grep -E '((api/swagger.yaml)|(api/docs.go))$')" >> $GITHUB_OUTPUT
       - id: not_up_to_date
         if: ${{ steps.get_diff.outputs.diff }}
         run: |
