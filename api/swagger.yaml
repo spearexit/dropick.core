@@ -1,0 +1,29 @@
+basePath: /api/v1
+definitions:
+  apis.JSONResult:
+    properties:
+      code:
+        type: integer
+      data: {}
+      message:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /health/ping:
+    get:
+      consumes:
+      - application/json
+      description: do ping
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apis.JSONResult'
+      summary: ping to check server status
+      tags:
+      - /health
+swagger: "2.0"

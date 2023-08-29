@@ -1,0 +1,106 @@
+name: CI
+on: 
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  format:
+    name: Format check
+    strategy:
+      matrix:
+        go-version: [1.21.x]
+        os: [ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v4
+        with:
+          go-version: ${{ matrix.go-version }}
+      - name: Run gofmt
+        run: if [ "$(gofmt -s -l . | wc -l)" -gt 0 ]; then exit 1; fi
+        if: matrix.os == 'ubuntu-latest'
+  lint:
+    name: Lint
+    strategy:
+      matrix:
+        go-version: [1.21.x]
+        os: [ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v4
+        with:
+          go-version: ${{ matrix.go-version }}
+      - name: Run lint
+        run: go vet ./...
+  test:
+    name: Test
+    strategy:
+      matrix:
+        go-version: [1.21.x]
+        os: [ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    env:
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_HOST: localhost
+      DB_DATABASE: dropick_test
+      DB_PORT: 5432
+    services:
+      db:
+        image: postgres
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: dropick_test
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v4
+        with:
+          go-version: ${{ matrix.go-version }}
+      - name: install dependency
+        run: go mod download
+      - name: Run migrate
+        run : go run cmd/dropick_migrate/migrate_initialize.go
+      - name: Run test
+        run: go test -v ./...
+  docs_update_check:
+    name: Docs Update Check
+    strategy:
+      matrix:
+        go-version: [1.21.x]
+        os: [ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-go@v4
+        with:
+          go-version: ${{ matrix.go-version }}
+      - name: download and execute swag
+        run: |
+          go install github.com/swaggo/swag/cmd/swag@latest
+          swag init -d internal/apis -g app.go --ot go,yaml -o api
+      - id: get_diff
+        run: |
+          echo "diff=$(git diff --name-only ${{ github.event.pull_request.head.sha }} | grep -E '((api/swagger.yaml)|(api/docs.go))$')" >> $GITHUB_OUTPUT
+      - id: not_up_to_date
+        if: ${{ steps.get_diff.outputs.diff }}
+        run: |
+          echo "::error file=docs/swagger.yaml::docs seems not updated, please run 'swag init -d internal/apis -g app.go --ot go,yaml -o api' and commit the changes."
+          exit 1
+      - id: up_to_date
+        if: ${{ !steps.get_diff.outputs.diff }}
+        run: |
+          echo "docs/swagger.yaml is up to date."
+          exit 0
