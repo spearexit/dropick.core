@@ -97,7 +97,7 @@ jobs:
       - id: not_up_to_date
         if: ${{ steps.get_diff.outputs.diff }}
         run: |
-          echo "previous output is: $GITHUB_OUTPUT"
+          echo "previous output is: ${{ steps.get_diff.outputs.diff }}"
           echo "::error file=docs/swagger.yaml::docs seems not updated, please run 'swag init -d internal/apis -g app.go --ot go,yaml -o api' and commit the changes."
           exit 1
       - id: up_to_date

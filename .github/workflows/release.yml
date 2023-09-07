@@ -6,10 +6,7 @@ on:
     branches:
       - master
   push:
-    branches:
-      - master
-    tags:
-      - v*.*.*
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -22,6 +19,7 @@ jobs:
         uses: mathieudutour/github-tag-action@v6.1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          create_annotated_tag: true
       - name: Create a GitHub release
         uses: ncipollo/release-action@v1
         with:
