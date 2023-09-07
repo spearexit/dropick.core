@@ -93,7 +93,7 @@ jobs:
           swag init -d internal/apis -g app.go --ot go,yaml -o api
       - id: get_diff
         run: |
-          echo "diff=$(git diff --name-only ${{ github.event.pull_request.head.sha }} | grep -E '((api/swagger.yaml)|(api/docs.go))$')" >> $GITHUB_OUTPUT
+          echo "diff=$(git diff --name-only | grep -E '((api/swagger.yaml)|(api/docs.go))$')" >> $GITHUB_OUTPUT
       - id: not_up_to_date
         if: ${{ steps.get_diff.outputs.diff }}
         run: |
