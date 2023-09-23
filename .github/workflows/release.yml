@@ -31,7 +31,7 @@ jobs:
           create_annotated_tag: true
       - name: build executable artifact
         run: |
-          GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o ./bin/dropick_api/${{ matrix.goos }}_${{ matrix.goarch }} ./cmd/dropick_api
+          GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o ./bin/dropick_api/${{ matrix.goos }}_${{ matrix.goarch }}_${{ steps.tag_version.outputs.new_version }} ./cmd/dropick_api
       - name: Create a GitHub release
         uses: ncipollo/release-action@v1
         with:

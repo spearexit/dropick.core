@@ -18,7 +18,7 @@ func main() {
 	m := gormigrate.New(db, gormigrate.DefaultOptions, []*gormigrate.Migration{})
 
 	m.InitSchema(func(tx *gorm.DB) error {
-		if err := tx.AutoMigrate(&models.Workflow{}, &models.Document{}, &models.Group{}, &models.Tag{}, &models.User{}); err != nil {
+		if err := tx.AutoMigrate(&models.Workflow{}, &models.Document{}, &models.Group{}, &models.User{}); err != nil {
 			return err
 		}
 		return nil
