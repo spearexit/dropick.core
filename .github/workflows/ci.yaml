@@ -20,7 +20,12 @@ jobs:
       - name: Run lint
         run: go vet ./...
       - name: Run gofmt
-        run: if [ "$(gofmt -s -l . | wc -l)" -gt 0 ]; then exit 1; fi
+        run: |
+          if [ "$(gofmt -s -l . | wc -l)" -gt 0 ]; then
+            echo "Please run 'gofmt -s -w .', and commit the changes.";
+            echo "$(gofmt -s -l .)";
+            exit 1;
+          fi
         if: matrix.os == 'ubuntu-latest'
   test:
     name: Test
