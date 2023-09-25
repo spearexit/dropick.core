@@ -9,6 +9,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/gin-contrib/logger"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"github.com/spearexit/dropick.core/v2/api"
@@ -50,6 +51,7 @@ func (a *App) GetRouter() *gin.Engine {
 	if shared.Config.Server.Mode == "production" {
 		gin.SetMode(gin.ReleaseMode)
 		r = gin.New()
+		r.Use(logger.SetLogger())
 	} else {
 		r = gin.Default()
 	}

@@ -6,5 +6,6 @@ import (
 
 type Group struct {
 	gorm.Model
-	GroupType string `from:"group_type" json:"group_type"`
+	Name string `from:"name" json:"name"`
+	Type string `from:"type" json:"type"`
 }
