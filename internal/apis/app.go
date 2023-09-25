@@ -13,6 +13,7 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/spearexit/dropick.core/v2/api"
 	"github.com/spearexit/dropick.core/v2/internal/shared"
+	"github.com/gin-contrib/logger"
 	"github.com/swaggo/files"
 	"github.com/swaggo/gin-swagger"
 	"gorm.io/gorm"
@@ -50,6 +51,7 @@ func (a *App) GetRouter() *gin.Engine {
 	if shared.Config.Server.Mode == "production" {
 		gin.SetMode(gin.ReleaseMode)
 		r = gin.New()
+		r.Use(logger.SetLogger())
 	} else {
 		r = gin.Default()
 	}
