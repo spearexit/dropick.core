@@ -9,11 +9,11 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/gin-contrib/logger"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"github.com/spearexit/dropick.core/v2/api"
 	"github.com/spearexit/dropick.core/v2/internal/shared"
-	"github.com/gin-contrib/logger"
 	"github.com/swaggo/files"
 	"github.com/swaggo/gin-swagger"
 	"gorm.io/gorm"
