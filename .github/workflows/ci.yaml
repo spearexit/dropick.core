@@ -3,9 +3,13 @@ on:
   pull_request:
     types: [opened, reopened, ready_for_review, synchronize]
 
+permissions:
+  contents: read
+  checks: write
+
 jobs:
   lint:
-    name: Lint & Format
+    name: Lint
     strategy:
       matrix:
         go-version: [1.21.x]
@@ -17,16 +21,11 @@ jobs:
       - uses: actions/setup-go@v4
         with:
           go-version: ${{ matrix.go-version }}
-      - name: Run lint
-        run: go vet ./...
-      - name: Run gofmt
-        run: |
-          if [ "$(gofmt -s -l . | wc -l)" -gt 0 ]; then
-            echo "Please run 'gofmt -s -w .', and commit the changes.";
-            echo "$(gofmt -s -l .)";
-            exit 1;
-          fi
-        if: matrix.os == 'ubuntu-latest'
+          cache: false
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v3
+        with:
+          version: latest
   test:
     name: Test
     strategy:
