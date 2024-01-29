@@ -39,7 +39,7 @@ jobs:
         goarch: [amd64, arm64]
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-go@v4
+      - uses: actions/setup-go@v5
         with:
           go-version: ${{ matrix.go-version }}
       - name: build executable artifact
@@ -64,10 +64,11 @@ jobs:
         with:
           pattern: dropick_api_*_${{ needs.bump_version_and_tag.outputs.new_version }}
           path: ./bin/dropick_api/
+          merge-multiple: true
       - name: Create a GitHub release
         uses: ncipollo/release-action@v1
         with:
           tag: ${{ needs.bump_version_and_tag.outputs.new_tag }}
           name: Release ${{ needs.bump_version_and_tag.outputs.new_tag }}
           generateReleaseNotes: true
-          artifacts: ./cmd,./internal,./pkg,./go.mod,./go.sum,./bin/dropick_api/*
+          artifacts: ./bin/dropick_api/*
